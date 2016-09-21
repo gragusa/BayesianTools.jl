@@ -1,7 +1,15 @@
 module ProductDistributions
 
+import Distributions: Continuous, ContinuousDistribution,
+ContinuousUnivariateDistribution, ContinuousMultivariateDistribution,
+## Univariate Distributions
+Truncated, Cauchy, Gumbel, Laplace, Logistic, NoncentralT, Normal,
+NormalCanon, TDist, Beta, BetaPrime, Chi, Chisq, Erlang, Exponential,
+FDist, Frechet, Gamma, InverseGamma, InverseGaussian, Kolmogorov,
+LogNormal, NoncentralChisq, NoncentralF, Rayleigh, Weibull, KSOneSided,
+NoncentralBeta
+
 using Reexport
-import Distributions: ContinuousMultivariateDistribution
 @reexport using Distributions
 
 immutable ProductDistribution <: ContinuousMultivariateDistribution
@@ -19,18 +27,6 @@ function Distributions.insupport{T<:Real}(d::ProductDistribution, x::AbstractVec
     all(map(insupport, d.marginals, x))
 end
 
-# function logpdf{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
-#     if Distributions.insupport(d, x)
-#         l = zero(T)
-#         @inbounds for i = 1:length(d.marginals)
-#             l += logpdf(d.marginals[i], x[i])
-#         end
-#     else
-#         l = convert(T, -Inf)
-#     end
-#     l
-# end
-
 function Distributions.logpdf{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
     if Distributions.insupport(d, x)
         l = zero(T)
@@ -42,6 +38,11 @@ function Distributions.logpdf{T<:Real}(d::ProductDistribution, x::AbstractVector
     end
     l
 end
+
+function Distributions.pdf{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
+    exp(logpdf(d, x))
+end
+
 
 function Distributions.rand!{T<:Real}(d::ProductDistribution, x::DenseMatrix{T})
     P, N = size(x)
@@ -55,5 +56,4 @@ end
 
 export ProductDistribution
 
-
-end # module
+end
