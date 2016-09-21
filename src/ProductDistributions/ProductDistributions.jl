@@ -1,14 +1,8 @@
 module ProductDistributions
 
-import Distributions: Continuous, ContinuousDistribution,
-ContinuousUnivariateDistribution, ContinuousMultivariateDistribution,
+import Distributions: ContinuousDistribution, ContinuousMultivariateDistribution,
 ## Univariate Distributions
-Truncated, Cauchy, Gumbel, Laplace, Logistic, NoncentralT, Normal,
-NormalCanon, TDist, Beta, BetaPrime, Chi, Chisq, Erlang, Exponential,
-FDist, Frechet, Gamma, InverseGamma, InverseGaussian, Kolmogorov,
-LogNormal, NoncentralChisq, NoncentralF, Rayleigh, Weibull, KSOneSided,
-NoncentralBeta
-
+logpdf, pdf, rand!
 using Reexport
 @reexport using Distributions
 
