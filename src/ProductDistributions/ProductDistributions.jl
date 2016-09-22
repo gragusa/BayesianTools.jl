@@ -12,6 +12,8 @@ NoncentralBeta
 using Reexport
 @reexport using Distributions
 
+import Base: first, start, next, done
+
 immutable ProductDistribution <: ContinuousMultivariateDistribution
     ## Assign a prior on α, β such that
     marginals::Array{ContinuousDistribution, 1}
@@ -53,6 +55,12 @@ function Distributions.rand!{T<:Real}(d::ProductDistribution, x::DenseMatrix{T})
     end
     x
 end
+
+Base.start(d::ProductDistribution) = 1
+Base.first(d::ProductDistribution) = d.marginals[1]
+Base.done(d::ProductDistribution, state) = state == length(d) + 1
+Base.next(d::ProductDistribution, state) = (d.marginals[state], state + 1)
+
 
 export ProductDistribution
 
