@@ -47,14 +47,18 @@ function invlink(d::TransformDistribution, x::Real)
 end
 
 function logjacobian(d::TransformDistribution, x::Real)
+    # x - a >= 0
+    # b - x >= 0
     a, b = minimum(d), maximum(d)
     lowerbounded, upperbounded = isfinite(a), isfinite(b)
     if lowerbounded && upperbounded
-      log((x - a) * (b - x) / (b - a))
+      - log(b - x)
     elseif lowerbounded
-      log(x - a)
+      - log(x - a)
     elseif upperbounded
-      log(b - x)
+      log(abs((b - a)/((a - x)*(x - b))))
+    else
+      0.0
     end
 end
 
@@ -99,12 +103,10 @@ link(d::UnitDistribution, x::Real) = logit(x)
 
 invlink(d::UnitDistribution, x::Real) = invlogit(x)
 
+## logjacobian is d link / d x = log (1/(1-x))
 logjacobian(d::UnitDistribution, x::Real) = -log(x)-log(1.0-x)
 
-# function logpdf(d::UnitDistribution, x::Real, transform::Bool)
-#   lp = logpdf(d, x)
-#   transform ? lp + log(x * (1.0 - x)) : lp
-# end
+
 
 invlogit(x::Real) = 1.0 / (exp(-x) + 1.0)
 invlogit(x::AbstractArray) = map(invlogit, x)
