@@ -8,16 +8,16 @@ using Reexport
 
 import Base: first, start, next, done
 
-immutable ProductDistribution <: ContinuousMultivariateDistribution
+immutable ProductDistribution{T} <: ContinuousMultivariateDistribution
     ## Assign a prior on α, β such that
-    marginals::Array{ContinuousDistribution, 1}
+    marginals::T
 end
 
 Base.length(d::ProductDistribution) = length(d.marginals)
 
 function ProductDistribution(args...)
-    ProductDistribution([args...])
-end
+     ProductDistribution((args...,))
+ end
 
 function Distributions.insupport{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
     all(map(insupport, d.marginals, x))
@@ -38,7 +38,6 @@ end
 function Distributions.pdf{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
     exp(logpdf(d, x))
 end
-
 
 function Distributions.rand!{T<:Real}(d::ProductDistribution, x::DenseMatrix{T})
     P, N = size(x)
