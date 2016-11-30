@@ -23,9 +23,9 @@ rand!(d, x)
 @test !insupport(d, [0., 2.])
 @test insupport(d, [0., 1.])
 
-@test logpdf(d, [0., 0.5]) .== logpdf(d.marginals[1], 0.) + logpdf(d.marginals[2], 0.5)
+@test logpdf(d, [0., 0.5]) .== logpdf(d.marginals[1].m, 0.) + logpdf(d.marginals[2].m, 0.5)
 
-@test pdf(d, [0., 0.5]) ≈ pdf(d.marginals[1], 0.)*pdf(d.marginals[2], 0.5)
+@test pdf(d, [0., 0.5]) ≈ pdf(d.marginals[1].m, 0.)*pdf(d.marginals[2].m, 0.5)
 
 
 using BayesianTools.Links
@@ -39,7 +39,3 @@ for d in [Normal(0,1), TDist(2)]
     @test link(d, 0.1) == 0.1
     @test invlink(d, link(d, 0.1)) ≈ 0.1
 end
-
-
-
-
