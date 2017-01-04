@@ -16,17 +16,24 @@ end
 Base.length(d::ProductDistribution) = length(d.marginals)
 
 function ProductDistribution(args...)
-     ProductDistribution((args...,))
- end
+        ProductDistribution((args...,))
+end
+
+ProductDistribution(x::Distribution) = ProductDistribution([x])
 
 function Distributions.insupport{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
-    all(map(insupport, d.marginals, x))
+    insup = true
+    for i in eachindex(d.marginals)
+        insupport(d.marginals[i], x[i]) || break
+        insup = true
+    end
+    insup
 end
 
 function Distributions.logpdf{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
     if Distributions.insupport(d, x)
         l = zero(T)
-        @inbounds for i = 1:length(d.marginals)
+        @inbounds for i in 1:length(d.marginals)
             l += logpdf(d.marginals[i], x[i])
         end
     else
