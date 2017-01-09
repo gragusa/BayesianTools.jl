@@ -45,9 +45,9 @@ function Distributions.pdf{T<:Real}(d::ProductDistribution, x::AbstractVector{T}
     exp(logpdf(d, x))
 end
 
-function Distributions._rand!{T<:Real}(d::ProductDistribution, x::DenseMatrix{T})
+function Distributions.rand!{T<:Real}(d::ProductDistribution, x::DenseMatrix{T})
     P, N = size(x)
-    @assert P == length(p)
+    @assert P == length(d)
     @inbounds for i = 1:N
         for p = 1:P
             x[p, i] = rand(d.marginals[p])
