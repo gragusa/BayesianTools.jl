@@ -35,6 +35,9 @@ loglikelihood(p, [.1,.5]) # = loglikelihood(Normal(0,1), .1) + loglikelihood(Bet
 likelihood(p, [.1,.5]) # = likelihood(Normal(0,1), .1) * likelihood(Beta(1.,1.), .5)
 ```
 
-
+It is also possible to draw a sample from `p`
+```julia
+rand!(p, Array{Float64}(2,100))
+```
 
 
