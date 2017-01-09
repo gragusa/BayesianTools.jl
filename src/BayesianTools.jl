@@ -2,9 +2,9 @@ module BayesianTools
 
 using Reexport
 
-include("ProductDistributions/ProductDistributions.jl")
 include("Links/Links.jl")
-
+include("ProductDistributions/ProductDistributions.jl")
+include("crossmethods.jl")
 #export ProductDistribution, link, invlink
 
 
