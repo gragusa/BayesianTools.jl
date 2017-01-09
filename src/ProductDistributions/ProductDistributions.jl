@@ -7,6 +7,8 @@ using Reexport
 @reexport using Distributions
 
 import Base: first, start, next, done
+import Links: link, invlink
+
 
 immutable ProductDistribution{T} <: ContinuousMultivariateDistribution
     ## Assign a prior on α, β such that
@@ -61,6 +63,9 @@ Base.first(d::ProductDistribution) = d.marginals[1]
 Base.done(d::ProductDistribution, state) = state == length(d) + 1
 Base.next(d::ProductDistribution, state) = (d.marginals[state], state + 1)
 
+
+BayesianTools.Links.link(p::ProductDistribution, x::Vector) = map(BayesianTools.Links.link, p, x)
+BayesianTools.Links.invlink(p::ProductDistribution, x::Vector) = map(BayesianTools.Links.invlink, p, x)
 
 export ProductDistribution
 
