@@ -22,10 +22,9 @@ end
 ProductDistribution(x::Distribution) = ProductDistribution([x])
 
 function Distributions.insupport{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
-    insup = false
+    insup = true
     for i in eachindex(d.marginals)
-        insupport(d.marginals[i], x[i]) || break
-        insup = true
+        insupport(d.marginals[i], x[i]) || (insup = false; break)
     end
     insup
 end
