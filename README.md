@@ -23,16 +23,17 @@ The following code defines the distribution (up to a scaling constant) that resu
 ```julia
 using BayesianTools.ProductDistributions
 p = ProductDistribution(Normal(0,1), Beta(1.,1.))
+n = length(p) ## 2
 ```
 To check whether an `Array{Float64}` is in the support of `p`
 ```julia
 insupport(p, [.1,2.]) ## false
 insupport(p, [.1,1.]) ## true
 ```
-The likelihood and loglikelihood are
+The likpdf and the pdf at a point `x::Array{Float64}(n)` are
 ```julia
-loglikelihood(p, [.1,.5]) # = loglikelihood(Normal(0,1), .1) + loglikelihood(Beta(1.,1.), .5)
-likelihood(p, [.1,.5]) # = likelihood(Normal(0,1), .1) * likelihood(Beta(1.,1.), .5)
+logpdf(p, [.1,.5]) # = logpdf(Normal(0,1), .1) + logpdf(Beta(1.,1.), .5)
+pdf(p, [.1,.5]) # = pdf(Normal(0,1), .1) * pdf(Beta(1.,1.), .5)
 ```
 
 It is also possible to draw a sample from `p`
