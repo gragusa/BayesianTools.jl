@@ -1,7 +1,7 @@
 # BayesianTools.jl
-[![Build Status](https://travis-ci.org/gragusa/ProductDistributions.jl.svg?branch=master)](https://travis-ci.org/gragusa/ProductDistributions.jl)
-[![Coverage Status](https://coveralls.io/repos/gragusa/ProductDistributions.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/gragusa/ProductDistributions.jl?branch=master)
-[![codecov.io](http://codecov.io/github/gragusa/ProductDistributions.jl/coverage.svg?branch=master)](http://codecov.io/github/gragusa/ProductDistributions.jl?branch=master)
+[![Build Status](https://travis-ci.org/gragusa/BayesianTools.jl.svg?branch=master)](https://travis-ci.org/gragusa/BayesianTools.jl)
+[![Coverage Status](https://coveralls.io/repos/gragusa/BayesianTools.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/gragusa/BayesianTools.jl?branch=master)
+[![codecov.io](http://codecov.io/github/gragusa/BayesianTools.jl/coverage.svg?branch=master)](http://codecov.io/github/gragusa/BayesianTools.jl?branch=master)
 
 `BayesianTools.jl` is a Julia package with methods useful for Monte Carlo Markov Chain simulations. The package has two submodules:
 
