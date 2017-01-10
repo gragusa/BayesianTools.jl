@@ -15,8 +15,13 @@ import StatsFuns: logit
 using Reexport
 @reexport using Distributions
 
+using BayesianTools
+@reexport using BayesianTools
+
+
+#################### Bounded Distribution ####################
 typealias TransformDistribution{T<:ContinuousUnivariateDistribution}
-  Union{T, Truncated{T}}
+  Union{T, Truncated{T}, Improper}
 
 function link(d::TransformDistribution, x::Real)
   a, b = minimum(d), maximum(d)
@@ -52,17 +57,15 @@ function logjacobian(d::TransformDistribution, x::Real)
     a, b = minimum(d), maximum(d)
     lowerbounded, upperbounded = isfinite(a), isfinite(b)
     if lowerbounded && upperbounded
-      - log(b - x)
+      log((b-a)/((b-x)*(x-a)))
     elseif lowerbounded
-      - log(x - a)
+      -log(x - a)
     elseif upperbounded
-      log(abs((b - a)/((a - x)*(x - b))))
+      -log(x - b)
     else
       0.0
     end
 end
-
-
 #################### RealDistribution ####################
 
 typealias RealDistribution
@@ -72,9 +75,6 @@ typealias RealDistribution
 link(d::RealDistribution, x::Real) = x
 invlink(d::RealDistribution, x::Real) = x
 logjacobian(d::RealDistribution, x::Real) = zero(eltype(x))
-# logpdf(d::RealDistribution, x::Real, transform::Bool) = logpdf(d, x)
-
-
 #################### PositiveDistribution ####################
 
 typealias PositiveDistribution
@@ -83,35 +83,20 @@ typealias PositiveDistribution
                 NoncentralChisq, NoncentralF, Rayleigh, Weibull}
 
 link(d::PositiveDistribution, x::Real) = log(x)
-
 invlink(d::PositiveDistribution, x::Real) = exp(x)
-
 logjacobian(d::PositiveDistribution, x::Real) = log(x)
-
-# function  logpdf(d::PositiveDistribution, x::Real, transform::Bool)
-#   lp = logpdf(d, x)
-#   transform ? lp + log(x) : lp
-# end
-
-
 #################### UnitDistribution ####################
 
 typealias UnitDistribution
           Union{Beta, KSOneSided, NoncentralBeta}
 
 link(d::UnitDistribution, x::Real) = logit(x)
-
 invlink(d::UnitDistribution, x::Real) = invlogit(x)
-
 ## logjacobian is d link / d x = log (1/(1-x))
 logjacobian(d::UnitDistribution, x::Real) = -log(x)-log(1.0-x)
 
-
-
 invlogit(x::Real) = 1.0 / (exp(-x) + 1.0)
 invlogit(x::AbstractArray) = map(invlogit, x)
-
-
 
 
 export link, invlink, logjacobian

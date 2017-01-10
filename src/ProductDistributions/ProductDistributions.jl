@@ -61,7 +61,6 @@ Base.first(d::ProductDistribution) = d.marginals[1]
 Base.done(d::ProductDistribution, state) = state == length(d) + 1
 Base.next(d::ProductDistribution, state) = (d.marginals[state], state + 1)
 
-
 export ProductDistribution
 
 end
