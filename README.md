@@ -51,26 +51,53 @@ The typical use case of the methods in the `Links` is best understood by an exam
 
  This is a simple distribution, and there are many straightforward ways to simulate it directly, but  we will employ a random walk Metropolis-Hastings (MH) algorithm with standard Gaussian proposal.
 
-Since the support of this distribution is x > 0, there are three options regarding the proposal distribution:
+Since the support of this distribution is x > 0, there are four options regarding the proposal distribution:
 
-1. Use a truncated normal distribution
-2. Sample from a Normal(0,1) until the draw is positive
-3. Re-parametrise the distribution in terms of ![](https://latex.codecogs.com/gif.latex?%5Cinline%20y%20%3D%20%5Cexp%28y%29) that is to sample from
+1. Use a Normal(0,1) and proceed as you normally would if the support of the distribution was (-Inf, +Inf).
+
+2. Use a truncated normal distribution
+3. Sample from a Normal(0,1) until the draw is positive
+
+4. Re-parametrise the distribution in terms of ![](https://latex.codecogs.com/gif.latex?%5Cinline%20y%20%3D%20%5Cexp%28y%29) that is to sample from
+
 ![Re-parametrise](https://latex.codecogs.com/gif.latex?%5Ctilde%7B%5Cpi%7D%28y%29%20%3D%20%5Clog%28y%29e%5E%7B-%5Clog%28y%29%7D)
+
+The first strategy will work just fine as long as the density evaluates to 0 for value outside the support. This is the case for the `pdf` of a `Gamma` in the `Distributions` package.
+
+The second and the third strategy is going to work _as long as the acceptance ratio_ includes the normalising constant (see [Darren Wilkinson's post](https://darrenjw.wordpress.com/2012/06/04/metropolis-hastings-mcmc-when-the-proposal-and-target-have-differing-support/)).
+
+The last strategy needs also an adjustment to the acceptance ratio to incorparate the jacobian of the transformation.
+
+The code below use `invlink`, `link`, and `logjacobian` to carry out the r.v. transformation and the Jacobian adjustment.
+
+Notice the `Improper` distribution is a subtype of `ContinuousUnivariateDistribution` that is useful in this case as it allows the transformations to go through automatically.
 
  ```julia
  using BayesianTools.Links
- function mcmc_1(iters)
+ function mcmc_wrong(iters)
     chain = Array{Float64}(iters)
-    gamma = Gamma(3, 1)
+    gamma = Gamma(2, 1)
+    d = Improper(0, +Inf)
+    lx  = 1.0
+    for i in 1:iters
+       xs = link(d, lx) + randn()
+       lxs = invlink(d, xs)
+       a = logpdf(gamma, lxs)-logpdf(gamma, lx)       
+       (rand() < exp(a)) && (lx = lxs)
+       chain[i] = lx
+    end
+    return chain
+end
+ function mcmc_right(iters)
+    chain = Array{Float64}(iters)
+    gamma = Gamma(2, 1)
     d = Improper(0, +Inf)
     lx  = 1.0
     for i in 1:iters
        xs = link(d, lx) + randn()
        lxs = invlink(d, xs)
        a = logpdf(gamma, lxs)-logpdf(gamma, lx)
-       ## Log jacobian
-       ## Need to adjust sign of log-absolute jacobian
+       ## Log absolute jacobian adjustment
        a = a - logjacobian(d, lxs) + logjacobian(d, lx)
        (rand() < exp(a)) && (lx = lxs)
        chain[i] = lx
@@ -81,8 +108,15 @@ end
 
 The results is
 ```julia
-mc1 = mcmc_1(1_000_000)
+mc0 = mcmc_wrong(1_000_000)
+mc1 = mcmc_right(1_000_000)
 using Plots
-Plots.histogram(mc1, normalize=true, bins = 100, fill=:slategray)
-plot!(x->pdf(Gamma(3,1),x), w = 2.6, color = :darkred)
+Plots.histogram([mc0, mc1], normalize=true, bins = 100, fill=:slategray, layout = (1,2), lab = "draws")
+title!("Incorrect sampler", subplot = 1)
+title!("Correct sampler", subplot = 2)
+plot!(x->pdf(Gamma(2,1),x), w = 2.6, color = :darkred, subplot = 1, lab = "Gamma(2,1) density")
+plot!(x->pdf(Gamma(2,1),x), w = 2.6, color = :darkred, subplot = 2, lab = "Gamma(2,1) density"))
+svg("sampler")
 ```
+
+![histogram](docs/sampler.svg)

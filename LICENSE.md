@@ -1,4 +1,4 @@
-The ProductDistributions.jl package is licensed under the MIT "Expat" License:
+The BayesianTools.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2016: Giuseppe Ragusa.
 > 
