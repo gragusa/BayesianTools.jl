@@ -119,4 +119,4 @@ plot!(x->pdf(Gamma(2,1),x), w = 2.6, color = :darkred, subplot = 2, lab = "Gamma
 svg("sampler")
 ```
 
-![histogram](docs/sampler.svg)
+![histogram](docs/images/sampler.svg)
