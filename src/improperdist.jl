@@ -18,8 +18,8 @@ function insupport(d::Improper, x::Real)
     (x >= d.l && x <= d.u) ? true : false
 end
 
-Distributions.pdf(d::Improper, x::Real) = insupport(d, x) ? 0.0 : 1.0
-Distributions.logpdf(d::Improper, x::Real) = insupport(d, x) ? +Inf : 0.0
+Distributions.pdf(d::Improper, x::Real) = insupport(d, x) ? 1.0 : 0.0
+Distributions.logpdf(d::Improper, x::Real) = insupport(d, x) ? 0.0 : Inf
 Base.minimum(d::Improper) = d.l
 Base.maximum(d::Improper) = d.u
 export Improper
