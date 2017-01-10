@@ -2,7 +2,6 @@
 language: julia
 os:
   - linux
-  - osx
 julia:
   - release
   - nightly
@@ -14,6 +13,6 @@ notifications:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("ProductDistributions"); Pkg.test("ProductDistributions"; coverage=true)'
 after_success:
   # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("ProductDistributions")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'cd(Pkg.dir("BayesianTools")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("ProductDistributions")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'cd(Pkg.dir("BayesianTools")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
