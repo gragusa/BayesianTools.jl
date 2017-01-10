@@ -5,18 +5,18 @@ import Distributions: ContinuousDistribution, ContinuousMultivariateDistribution
 logpdf, pdf, rand!
 using Reexport
 @reexport using Distributions
+@reexport using BayesianTools
 
 import Base: first, start, next, done
 
 immutable ProductDistribution{T} <: ContinuousMultivariateDistribution
-    ## Assign a prior on α, β such that
     marginals::T
 end
 
 Base.length(d::ProductDistribution) = length(d.marginals)
 
 function ProductDistribution(args...)
-        ProductDistribution((args...,))
+    ProductDistribution((args...,))
 end
 
 ProductDistribution(x::Distribution) = ProductDistribution([x])
@@ -60,6 +60,8 @@ Base.start(d::ProductDistribution) = 1
 Base.first(d::ProductDistribution) = d.marginals[1]
 Base.done(d::ProductDistribution, state) = state == length(d) + 1
 Base.next(d::ProductDistribution, state) = (d.marginals[state], state + 1)
+
+
 
 export ProductDistribution
 
