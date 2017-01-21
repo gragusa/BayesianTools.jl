@@ -5,7 +5,7 @@ immutable Improper{T} <: ContinuousUnivariateDistribution
     l::T
     u::T
     function Improper(l::Number, u::Number)
-        @assert any((!isfinite(l), !isfinite(u))) "At least one of the boud must be Inf"
+        @assert any((!isfinite(l), !isfinite(u))) "At least one of the bounds must be Inf"
         @assert l < u "Lower bound must be smaller than upper bound"
         new{Float64}(float(l), float(u))
     end
