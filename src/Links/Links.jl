@@ -20,8 +20,7 @@ using BayesianTools
 
 
 #################### Bounded Distribution ####################
-typealias TransformDistribution{T<:ContinuousUnivariateDistribution}
-  Union{T, Truncated{T}, Improper}
+const TransformDistribution{T<:ContinuousUnivariateDistribution} = Union{T,Truncated{T},Improper}
 
 function link(d::TransformDistribution, x::Real)
   a, b = minimum(d), maximum(d)
@@ -68,27 +67,24 @@ function logjacobian(d::TransformDistribution, x::Real)
 end
 #################### RealDistribution ####################
 
-typealias RealDistribution
-          Union{Cauchy, Gumbel, Laplace, Logistic, NoncentralT, Normal,
-                NormalCanon, TDist}
+const RealDistribution =Union{Cauchy, Gumbel, Laplace, Logistic, NoncentralT, Normal,
+                              NormalCanon, TDist}
 
 link(d::RealDistribution, x::Real) = x
 invlink(d::RealDistribution, x::Real) = x
 logjacobian(d::RealDistribution, x::Real) = zero(eltype(x))
 #################### PositiveDistribution ####################
 
-typealias PositiveDistribution
-          Union{BetaPrime, Chi, Chisq, Erlang, Exponential, FDist, Frechet,
-                Gamma, InverseGamma, InverseGaussian, Kolmogorov, LogNormal,
-                NoncentralChisq, NoncentralF, Rayleigh, Weibull}
+const PositiveDistribution = Union{BetaPrime, Chi, Chisq, Erlang, Exponential, FDist, Frechet,
+                                   Gamma, InverseGamma, InverseGaussian, Kolmogorov, LogNormal,
+                                   NoncentralChisq, NoncentralF, Rayleigh, Weibull}
 
 link(d::PositiveDistribution, x::Real) = log(x)
 invlink(d::PositiveDistribution, x::Real) = exp(x)
 logjacobian(d::PositiveDistribution, x::Real) = log(x)
 #################### UnitDistribution ####################
 
-typealias UnitDistribution
-          Union{Beta, KSOneSided, NoncentralBeta}
+const UnitDistribution = Union{Beta, KSOneSided, NoncentralBeta}
 
 link(d::UnitDistribution, x::Real) = logit(x)
 invlink(d::UnitDistribution, x::Real) = invlogit(x)

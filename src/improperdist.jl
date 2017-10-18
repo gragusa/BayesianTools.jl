@@ -1,10 +1,10 @@
 using Distributions
 import Distributions: ContinuousUnivariateDistribution, pdf, logpdf
 
-immutable Improper{T} <: ContinuousUnivariateDistribution
+struct Improper{T} <: ContinuousUnivariateDistribution
     l::T
     u::T
-    function Improper(l::Number, u::Number)
+    function Improper{T}(l::Number, u::Number) where T<:Number
         @assert any((!isfinite(l), !isfinite(u))) "At least one of the bounds must be Inf"
         @assert l < u "Lower bound must be smaller than upper bound"
         new{Float64}(float(l), float(u))
