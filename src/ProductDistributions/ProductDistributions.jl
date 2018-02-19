@@ -56,6 +56,15 @@ function Distributions.rand!{T<:Real}(d::ProductDistribution, x::DenseMatrix{T})
     x
 end
 
+function Distributions.rand!{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
+    P = length(x)
+    @assert P == length(d)
+    for p = 1:P
+        x[p] = rand(d.marginals[p])
+    end
+    x
+end
+
 Base.start(d::ProductDistribution) = 1
 Base.first(d::ProductDistribution) = d.marginals[1]
 Base.done(d::ProductDistribution, state) = state == length(d) + 1
