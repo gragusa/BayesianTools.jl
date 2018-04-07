@@ -9,7 +9,7 @@ using Reexport
 
 import Base: first, start, next, done
 
-immutable ProductDistribution{T} <: ContinuousMultivariateDistribution
+struct ProductDistribution{T} <: ContinuousMultivariateDistribution
     marginals::T
 end
 
@@ -21,7 +21,7 @@ end
 
 ProductDistribution(x::Distribution) = ProductDistribution([x])
 
-function Distributions.insupport{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
+function Distributions.insupport(d::ProductDistribution, x::AbstractVector{T}) where T<:Real
     insup = true
     for i in eachindex(d.marginals)
         insupport(d.marginals[i], x[i]) || (insup = false; break)
@@ -29,7 +29,7 @@ function Distributions.insupport{T<:Real}(d::ProductDistribution, x::AbstractVec
     insup
 end
 
-function Distributions.logpdf{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
+function Distributions.logpdf(d::ProductDistribution, x::AbstractVector{T}) where T<:Real
     if Distributions.insupport(d, x)
         l = zero(T)
         @inbounds for i in 1:length(d.marginals)
@@ -41,11 +41,11 @@ function Distributions.logpdf{T<:Real}(d::ProductDistribution, x::AbstractVector
     l
 end
 
-function Distributions.pdf{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
+function Distributions.pdf(d::ProductDistribution, x::AbstractVector{T}) where T<:Real
     exp(logpdf(d, x))
 end
 
-function Distributions.rand!{T<:Real}(d::ProductDistribution, x::DenseMatrix{T})
+function Distributions.rand!(d::ProductDistribution, x::DenseMatrix{T}) where T<:Real
     P, N = size(x)
     @assert P == length(d)
     @inbounds for i = 1:N
