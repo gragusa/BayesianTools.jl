@@ -72,3 +72,11 @@ d = ProductDistribution(Normal(0,1), Uniform(0,1), InverseGamma(0.01, 0.01))
 
 d = ProductDistribution(Normal(0,1), Uniform(0,1), InverseGamma(0.01, 0.01), Improper(0,+Inf))
 @test link(d, invlink(d, [0.0, -1., 2., -2.])) == [0.0, -1., 2., -2.]
+
+d = ProductDistribution(Normal(), Uniform())
+srand(1)
+x2 = hcat([rand( d ) for i in 1:1000]...)
+@test maximum(x2[2,:])<=1.0
+@test maximum(x2[1,:])>=0.0
+
+@test(params(d) == (0.0, 1.0, 0.0, 1.0))

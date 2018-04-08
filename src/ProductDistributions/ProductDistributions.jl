@@ -67,7 +67,13 @@ end
 
 Distributions._rand!( d::ProductDistribution, a::AbstractArray ) = rand!( d, a )
 
-Distributions.params( d::ProductDistribution ) = union(params.(d.marginals))
+# found this tidbit here: https://discourse.julialang.org/t/efficient-tuple-concatenation/5398/3
+# this should probably go somewhere more generic...
+@inline tuplejoin(x) = x
+@inline tuplejoin(x, y) = (x..., y...)
+@inline tuplejoin(x, y, z...) = tuplejoin(tuplejoin(x, y), z...)
+
+Distributions.params( d::ProductDistribution ) = tuplejoin(params.(d.marginals)...)
 
 Base.start(d::ProductDistribution) = 1
 Base.first(d::ProductDistribution) = d.marginals[1]
