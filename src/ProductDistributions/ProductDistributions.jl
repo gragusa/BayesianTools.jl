@@ -65,11 +65,14 @@ function Distributions.rand!{T<:Real}(d::ProductDistribution, x::AbstractVector{
     x
 end
 
+Distributions._rand!( d::ProductDistribution, a::AbstractArray ) = rand!( d, a )
+
+Distributions.params( d::ProductDistribution ) = union(params.(d.marginals))
+
 Base.start(d::ProductDistribution) = 1
 Base.first(d::ProductDistribution) = d.marginals[1]
 Base.done(d::ProductDistribution, state) = state == length(d) + 1
 Base.next(d::ProductDistribution, state) = (d.marginals[state], state + 1)
-
 
 
 export ProductDistribution
