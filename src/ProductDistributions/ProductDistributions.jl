@@ -65,11 +65,20 @@ function Distributions.rand!{T<:Real}(d::ProductDistribution, x::AbstractVector{
     x
 end
 
+Distributions._rand!( d::ProductDistribution, a::AbstractArray ) = rand!( d, a )
+
+# found this tidbit here: https://discourse.julialang.org/t/efficient-tuple-concatenation/5398/3
+# this should probably go somewhere more generic...
+@inline tuplejoin(x) = x
+@inline tuplejoin(x, y) = (x..., y...)
+@inline tuplejoin(x, y, z...) = tuplejoin(tuplejoin(x, y), z...)
+
+Distributions.params( d::ProductDistribution ) = tuplejoin(params.(d.marginals)...)
+
 Base.start(d::ProductDistribution) = 1
 Base.first(d::ProductDistribution) = d.marginals[1]
 Base.done(d::ProductDistribution, state) = state == length(d) + 1
 Base.next(d::ProductDistribution, state) = (d.marginals[state], state + 1)
-
 
 
 export ProductDistribution
