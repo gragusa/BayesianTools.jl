@@ -56,10 +56,10 @@ function Distributions.rand!(d::ProductDistribution, x::DenseMatrix{T}) where T<
     x
 end
 
-function Distributions.rand!{T<:Real}(d::ProductDistribution, x::AbstractVector{T})
+function Distributions.rand!(d::ProductDistribution, x::AbstractVector{T}) where T<:Real
     P = length(x)
     @assert P == length(d)
-    for p = 1:P
+    @inbounds for p = 1:P
         x[p] = rand(d.marginals[p])
     end
     x
@@ -75,10 +75,22 @@ Distributions._rand!( d::ProductDistribution, a::AbstractArray ) = rand!( d, a )
 
 Distributions.params( d::ProductDistribution ) = tuplejoin(params.(d.marginals)...)
 
-Base.start(d::ProductDistribution) = 1
-Base.first(d::ProductDistribution) = d.marginals[1]
-Base.done(d::ProductDistribution, state) = state == length(d) + 1
-Base.next(d::ProductDistribution, state) = (d.marginals[state], state + 1)
+
+# Base.start(d::ProductDistribution) = 1
+# Base.first(d::ProductDistribution) = d.marginals[1]
+# Base.done(d::ProductDistribution, state) = state == length(d) + 1
+# Base.next(d::ProductDistribution, state) = (d.marginals[state], state + 1)
+
+
+function Base.iterate(d::ProductDistribution{T}, state=1) where T
+
+    if state > length(d)
+        return nothing
+    end
+
+    return (d.marginals[state], state + 1)
+end
+
 
 
 export ProductDistribution
