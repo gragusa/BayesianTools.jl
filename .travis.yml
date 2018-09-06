@@ -11,4 +11,5 @@ script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia --check-bounds=yes -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("BayesianTools"); Pkg.test("BayesianTools"; coverage=true)'
 after_success:
-  - julia -e 'cd(Pkg.dir("BayesianTools")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder()); Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'using Pkg; cd(Pkg.dir("BayesianTools")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder()); 
+Coveralls.submit(Coveralls.process_folder())'
