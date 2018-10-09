@@ -6,13 +6,13 @@
 `BayesianTools.jl` is a Julia package with methods useful for Monte Carlo Markov Chain simulations. The package has two submodules:
 
 - `ProductDistributions`: defines a `ProductDistribution` type and related methods useful for defining and evaluating independent priors
-- `Link`: usuful rescale MC proposals to the parameter space of the underlying prior
+- `Link`: usuful to rescale MC proposals to live in the suppport of the prior densities
 
 ## Installation
 
-The package is not registered, so it must be cloned:
+The package is now registiret
 ```julia
-Pkg.clone("https://github.com/gragusa/BayesianTools.jl.git")
+(v1.x) pkg> add BayesianTools
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ The following code shows how a product distribution resulting from multiplying a
 ```julia
 using BayesianTools.ProductDistributions
 p = ProductDistribution(Normal(0,1), Beta(1.,1.))
-n = length(p) ## 2 -> Number of distribution in the product
+n = length(p) ## 2 -> Number of distributions in the product
 ```
 To check whether an `Array{Float64}` is in the support of `p`
 ```julia
@@ -43,22 +43,23 @@ rand!(p, Array{Float64}(2,100))
 
 ### Links
 
-`invlink` and `link` are useful to transform and transform back the parameters of a model according to the support of a distribution. `logjacobian` provides the log absolute Jacobian of the inverse transformation applied by `invlink`.
+`invlink` and `link` are useful to transform and back-transform the parameters of a model according to the support of a distribution. `logjacobian` provides the log absolute Jacobian of the inverse transformation applied by `invlink`.
 
 The typical use case of the methods in the `Links` is best understood by an example. Suppose interest lies on sampling from a Gamma(2,1) distribution
 
 ![Gamma(2,1)](https://latex.codecogs.com/gif.latex?%5Cpi%28x%29%20%3D%20xe%5E%7B-x%7D%2C%5Cquad%20x%5Cgeqslant%200)
 
- This is a simple distribution, and there are many straightforward ways to simulate it directly, but  we will employ a random walk Metropolis-Hastings (MH) algorithm with standard Gaussian proposal.
+Being this a simple simple distribution there are many straightforward ways to simulate from it. However, we will consider employing a random walk Metropolis-Hastings (MH) sampler with standard Gaussian proposal.
 
-Since the support of this distribution is x > 0, there are four options regarding the proposal distribution:
+The support of this distribution is x > 0 and there are four options regarding the proposal distribution:
 
-1. Use a Normal(0,1) and proceed as you normally would if the support of the density was (-Inf, +Inf).
+1. Use a `Normal(0,1)` and proceed as you normally would if the support of the density was (-Inf, +Inf).
 
-2. Use a truncated normal distribution as proposal
+2. Use a truncated normal distribution 
+
 3. Sample from a Normal(0,1) until the draw is positive
 
-4. Re-parametrise the distribution in terms of ![](https://latex.codecogs.com/gif.latex?%5Cinline%20y%20%3D%20%5Cexp%28y%29) that is to sample from
+4. Re-parametrise the distribution in terms of ![](https://latex.codecogs.com/gif.latex?%5Cinline%20y%20%3D%20%5Cexp%28y%29),  that is, draw samples from
 
 ![Re-parametrise](https://latex.codecogs.com/gif.latex?%5Ctilde%7B%5Cpi%7D%28y%29%20%3D%20%5Clog%28y%29e%5E%7B-%5Clog%28y%29%7D)
 
